@@ -1,6 +1,5 @@
 import { Service } from 'typedi';
-import { Movie } from '../entity/Movie';
-import { CreateMovieInput, UpdateMovieInput } from '../../schema/movie';
+import { CreateMovieInput, Movie, UpdateMovieInput } from '../entity/Movie';
 
 @Service()
 export class MovieService {
