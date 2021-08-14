@@ -10,3 +10,9 @@ export class DeleteResponse {
     success:boolean
 
 }
+
+@ObjectType()
+export class BoolResponse {
+    @Field((_) => Boolean)
+    ok:boolean
+}

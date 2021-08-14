@@ -3,10 +3,11 @@ import { Service } from 'typedi';
 import {  ChangePasswordInput, GetNewTokenInput, LoginInput } from './input';
 
 
-import {  BoolResponse, GetNewTokenResponse, LoginResponse } from './types';
+import {  GetNewTokenResponse, LoginResponse } from './types';
 import { compare } from 'bcrypt';
 import { User } from '../entity/User/model';
 import { AuthService } from './services';
+import { BoolResponse } from '../shared/types/graphql-types';
 
 
 
