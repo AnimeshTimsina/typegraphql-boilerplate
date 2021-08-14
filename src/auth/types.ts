@@ -20,6 +20,12 @@ export class LoginResponse {
 export class GetNewTokenResponse extends LoginResponse {
 }
 
+@ObjectType()
+export class BoolResponse {
+    @Field((_) => Boolean)
+    ok:boolean
+}
+
 export interface MyContext extends ExpressContext {
     user: User | null
 }
@@ -32,3 +38,4 @@ export interface accessTokenProps extends tokenProps {}
 export interface refreshTokenProps extends tokenProps {
     tokenVersion:number
 }
+
