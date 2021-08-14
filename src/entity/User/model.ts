@@ -47,11 +47,11 @@ import { USER_ROLE } from '../../shared/types/interface';
   
     @Field(_ => Date)
     @CreateDateColumn()
-    updatedAt: Date;
+    createdAt: Date;
   
     @Field(_ => Date)
     @UpdateDateColumn()
-    createdAt: Date;
+    updatedAt: Date;
 
     @Column({type:'int',default:0})
     tokenVersion: number

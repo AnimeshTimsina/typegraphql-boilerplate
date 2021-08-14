@@ -1,3 +1,4 @@
+import { Length } from "class-validator";
 import { Field, InputType } from "type-graphql";
 
 @InputType()
@@ -13,4 +14,15 @@ export class LoginInput {
 export class GetNewTokenInput {
   @Field()
   refreshToken: string;  
+}
+
+@InputType()
+export class ChangePasswordInput {
+  @Field()
+  currentPassword: string;  
+
+  @Field()
+  @Length(8,150)
+  newPassword: string; 
+  
 }

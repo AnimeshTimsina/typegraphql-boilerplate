@@ -1,7 +1,7 @@
 import { Query, Resolver, Mutation, Arg, UseMiddleware, Ctx, ID } from 'type-graphql';
 import { Service } from 'typedi';
 import { UserService } from './service';
-import { CreateUserInput } from './input';
+import { CreateUserInput, UpdateUserInput } from './input';
 import { User } from './model';
 import { DeleteResponse } from '../../shared/types/graphql-types';
 import { deleteResponse } from '../../shared/types/interface';
@@ -17,17 +17,19 @@ export class UserResolver {
     ) {}
 
   @Query((_) => [User], { nullable: true })
-  @UseMiddleware(authService.userIsAdmin)
+  // @UseMiddleware(authService.userIsAdmin)
   async allUsers(): Promise<User[]> {
     return await this.userService.getAll();
   }
 
   @Query((_) => User, { nullable: true })
+  @UseMiddleware(authService.isAuthenticated)
   async getUser(@Arg('id',() => ID!) id: string): Promise<User | undefined> {
     return await this.userService.getOne(id);
   }
 
   @Mutation((_) => User)
+  // @UseMiddleware(authService.isAuthenticated)
   async registerUser(
     @Arg('UserInput') createUserInput: CreateUserInput,
   ): Promise<User> {
@@ -36,6 +38,7 @@ export class UserResolver {
 
 
   @Mutation((_) => DeleteResponse)
+  // @UseMiddleware(authService.userIsAdmin)
   async deleteUser(@Arg('id',() => ID!) id: string): Promise<deleteResponse<string|null>> {
     const deleted = await this.userService.delete(id);
     if (!deleted.success) throw('User with this id doesn\'t exist')
@@ -43,10 +46,16 @@ export class UserResolver {
   }
 
   @Query((_) => User)
-  @UseMiddleware(authService.isAuthenticated)
+  // @UseMiddleware(authService.isAuthenticated)
   async me(
     @Ctx(){user}:MyContext
   ): Promise<User | undefined> {
     return await this.userService.getOne(user!.id);
   }
+
+  @Mutation((_) => User)
+  async updateUser(@Arg('id',()=>ID!) id:string,@Arg('UpdateUserInput') updateUserInput:UpdateUserInput):Promise<User>{
+    return await this.userService.update(id,updateUserInput)
+  }
+
 }

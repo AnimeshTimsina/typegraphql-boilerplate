@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { User } from './model';
 import {hash} from 'bcrypt'
-import { CreateUserInput } from './input';
+import { CreateUserInput, UpdateUserInput } from './input';
 import { deleteResponse, USER_ROLE } from '../../shared/types/interface';
 
 @Service()
@@ -53,6 +53,19 @@ export class UserService {
       }
     }  
   } 
+
+  update = async (
+    id: string,
+    updateUserInput: UpdateUserInput,
+  ): Promise<User> => {
+    const userFound = await User.findOne({ where: { id } });
+    if (!userFound) {
+      throw new Error(`The user with id: ${id} does not exist!`);
+    }
+    Object.assign(userFound, updateUserInput);
+    const updatedUser = await userFound.save();
+    return updatedUser;
+  };
 
   incrementTokenNumber = (user:User) => {
     user.tokenVersion = user.tokenVersion + 1

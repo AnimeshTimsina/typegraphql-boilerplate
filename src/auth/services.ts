@@ -1,10 +1,12 @@
 import { ExpressContext } from "apollo-server-express"
+import { compare, hash } from "bcrypt"
 import { sign, verify } from "jsonwebtoken"
 import { MiddlewareFn } from "type-graphql"
 
 import Container, { Service } from "typedi"
 import { User } from "../entity/User/model"
 import { UserService } from "../entity/User/service"
+import { ChangePasswordInput } from "./input"
 import { accessTokenProps, MyContext, refreshTokenProps } from "./types"
 // import { UserService } from "entity/User/service"
 
@@ -63,6 +65,7 @@ export class AuthService extends UserService {
         if (!context.user) throw(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
         return next()
     }
+
     
     userIsAdmin:MiddlewareFn<MyContext> = ({context},next) => {
         if (!context.user) throw(this.NOT_AUTHENTICATED_ERROR_MESSAGE) 
@@ -88,6 +91,22 @@ export class AuthService extends UserService {
         }
         catch {
             throw('Invalid refresh token')
+        }
+    }
+
+    changePassword:(userId:string,p:ChangePasswordInput) => Promise<boolean> = async(userId,{currentPassword,newPassword}) => {
+        try {
+            const user = await this.getOne(userId)
+            if (!user) throw('User with this id doesn\'t exist')
+            const match = await compare(currentPassword,user.password)
+            if (!match) throw('Incorrect current password')
+            user.password = await hash(newPassword,12)
+            user.save()
+            user.tokenVersion += 1
+            return true
+        }
+        catch {
+            return false
         }
     }
 }

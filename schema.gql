@@ -3,6 +3,11 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
 input CreateMovieInput {
   actors: [String!]!
   description: String!
@@ -62,6 +67,7 @@ type Movie {
 
 type Mutation {
   addMovie(MovieInput: CreateMovieInput!): Movie!
+  changePassword(ChangePassworInput: ChangePasswordInput!, userId: ID!): Boolean!
   deleteMovie(id: Float!): Boolean!
   deleteUser(id: ID!): DeleteResponse!
   getNewToken(getNewTokenInput: GetNewTokenInput!): GetNewTokenResponse!
@@ -69,6 +75,7 @@ type Mutation {
   registerUser(UserInput: CreateUserInput!): User!
   revokeRefreshTokensForUser(userId: ID!): Boolean!
   updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
+  updateUser(UpdateUserInput: UpdateUserInput!, id: ID!): User!
 }
 
 type Query {
@@ -91,6 +98,12 @@ input UpdateMovieInput {
   description: String
   releaseYear: String
   title: String
+}
+
+input UpdateUserInput {
+  displayPicture: String
+  firstName: String
+  lastName: String
 }
 
 """The user model"""

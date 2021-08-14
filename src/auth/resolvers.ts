@@ -1,6 +1,6 @@
 import {  Resolver, Mutation, Arg, ID } from 'type-graphql';
 import { Service } from 'typedi';
-import {  GetNewTokenInput, LoginInput } from './input';
+import {  ChangePasswordInput, GetNewTokenInput, LoginInput } from './input';
 
 
 import {  GetNewTokenResponse, LoginResponse } from './types';
@@ -49,5 +49,12 @@ export class AuthResolver {
   async revokeRefreshTokensForUser(@Arg('userId',()=>ID!) userId:string){
     return await this.authService.revokeRefreshTokensForUser(userId)
   }
+
+  @Mutation((_) => Boolean)
+  async changePassword(@Arg('userId',()=>ID!) userId:string, @Arg('ChangePassworInput') changePasswordInput:ChangePasswordInput){
+    return await this.authService.changePassword(userId,{...changePasswordInput})
+  }
+
+
 
 }

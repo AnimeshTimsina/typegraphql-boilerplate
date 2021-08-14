@@ -28,3 +28,17 @@ export class CreateUserInput implements Partial<User> {
   displayPicture?: string
 
 }
+
+@InputType()
+export class UpdateUserInput implements Partial<User> {
+  @Field({nullable:true})
+  @Length(2, 50)
+  firstName?: string;
+
+  @Field({nullable:true})
+  @Length(2, 50)
+  lastName?: string;
+
+  @Field({ nullable: true })
+  displayPicture?: string
+}
