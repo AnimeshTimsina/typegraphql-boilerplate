@@ -1,29 +1,7 @@
-import { Field, ObjectType, InputType } from 'type-graphql';
 import { Length } from 'class-validator';
+import { Field, InputType } from 'type-graphql';
+import { Movie } from './model';
 
-@ObjectType()
-export class Movie {
-  @Field()
-  id: number;
-
-  @Field()
-  title: string;
-
-  @Field()
-  description: string;
-
-  @Field(_ => [String])
-  actors: string[];
-
-  @Field()
-  releaseYear: string;
-
-  @Field()
-  updatedAt: Date;
-
-  @Field()
-  createdAt: Date;
-}
 
 @InputType()
 export class CreateMovieInput implements Partial<Movie> {

@@ -20,4 +20,4 @@ const intializeDB = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.default = intializeDB;
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=initializeDB.js.map

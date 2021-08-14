@@ -10,39 +10,48 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Movie = void 0;
+const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 let Movie = class Movie extends typeorm_1.BaseEntity {
 };
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], Movie.prototype, "id", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", String)
 ], Movie.prototype, "title", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", String)
 ], Movie.prototype, "description", void 0);
 __decorate([
+    type_graphql_1.Field((_) => [String]),
     typeorm_1.Column({ type: 'text', array: true }),
     __metadata("design:type", Array)
 ], Movie.prototype, "actors", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.Column({ nullable: true, name: 'released_at' }),
     __metadata("design:type", String)
 ], Movie.prototype, "releaseYear", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.CreateDateColumn({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Movie.prototype, "updatedAt", void 0);
 __decorate([
+    type_graphql_1.Field(),
     typeorm_1.UpdateDateColumn({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Movie.prototype, "createdAt", void 0);
 Movie = __decorate([
-    typeorm_1.Entity()
+    type_graphql_1.ObjectType(),
+    typeorm_1.Entity({ name: 'movie' })
 ], Movie);
 exports.Movie = Movie;
-//# sourceMappingURL=Movie.js.map
+//# sourceMappingURL=model.js.map

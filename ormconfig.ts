@@ -24,13 +24,13 @@ const config: ConnectionOptions = {
   database: NODE_ENV === 'production' ? PROD_DB : DEV_DB,
   synchronize: NODE_ENV === 'production' ? false : true,
   logging: false,
-  entities: [`${dir}/models/entity/**/*.{ts,js}`],
-  migrations: [`${dir}/models/migrations/**/*.{ts,js}`],
-  subscribers: [`${dir}/models/subscriber/**/*.{ts,js}`],
+  entities: [`${dir}/entity/**/*.{ts,js}`],
+  migrations: [`${dir}/migrations/**/*.{ts,js}`],
+  subscribers: [`${dir}/subscriber/**/*.{ts,js}`],
   cli: {
-    migrationsDir: `${dir}/models/migrations`,
-    entitiesDir: `${dir}/models/entity`,
-    subscribersDir: `${dir}/models/subscriber`,
+    migrationsDir: `${dir}/migrations`,
+    entitiesDir: `${dir}/entity`,
+    subscribersDir: `${dir}/subscriber`,
   },
 };
 

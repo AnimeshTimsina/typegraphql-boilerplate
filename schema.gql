@@ -10,10 +10,45 @@ input CreateMovieInput {
   title: String!
 }
 
+input CreateUserInput {
+  displayPicture: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  role: USER_ROLE!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+type DeleteResponse {
+  id: ID!
+  success: Boolean!
+}
+
+input GetNewTokenInput {
+  refreshToken: String!
+}
+
+type GetNewTokenResponse {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
 
 type Movie {
   actors: [String!]!
@@ -28,12 +63,27 @@ type Movie {
 type Mutation {
   addMovie(MovieInput: CreateMovieInput!): Movie!
   deleteMovie(id: Float!): Boolean!
+  deleteUser(id: ID!): DeleteResponse!
+  getNewToken(getNewTokenInput: GetNewTokenInput!): GetNewTokenResponse!
+  login(LoginInput: LoginInput!): LoginResponse!
+  registerUser(UserInput: CreateUserInput!): User!
+  revokeRefreshTokensForUser(userId: ID!): Boolean!
   updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
 }
 
 type Query {
+  allUsers: [User!]
   getMovie(id: Float!): Movie
   getMovies: [Movie!]
+  getUser(id: ID!): User
+  me: User!
+}
+
+"""Type of user"""
+enum USER_ROLE {
+  ADMIN
+  CLIENT
+  STAFF
 }
 
 input UpdateMovieInput {
@@ -41,4 +91,16 @@ input UpdateMovieInput {
   description: String
   releaseYear: String
   title: String
+}
+
+"""The user model"""
+type User {
+  createdAt: DateTime!
+  displayPicture: String!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  role: USER_ROLE!
+  updatedAt: DateTime!
 }

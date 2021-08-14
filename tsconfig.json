@@ -21,9 +21,8 @@
       "noFallthroughCasesInSwitch": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-
-      "baseUrl": "/"
-
+      "resolveJsonModule": true,
+      "baseUrl": "/",
     },
     "include": ["src/**/*"],
     "exclude": ["src/**/*.spec.ts"]

@@ -1,12 +1,15 @@
 import { Query, Resolver, Mutation, Arg } from 'type-graphql';
 import { Service } from 'typedi';
-import { Movie, CreateMovieInput, UpdateMovieInput } from '../schema/movie';
-import { MovieService } from '../models/services/movieService';
+import { CreateMovieInput, UpdateMovieInput } from './input';
+import { Movie } from './model';
+import { MovieService } from './service';
 
 @Service()
 @Resolver(_ => Movie)
 export class MovieResolver {
-  constructor(private readonly movieService: MovieService) {}
+  constructor(
+    private readonly movieService: MovieService
+  ) {}
 
   @Query((_) => [Movie], { nullable: true })
   async getMovies(): Promise<Movie[]> {
