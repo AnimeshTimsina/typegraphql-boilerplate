@@ -3,6 +3,10 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type BoolResponse {
+  ok: Boolean!
+}
+
 input ChangePasswordInput {
   currentPassword: String!
   newPassword: String!
@@ -67,13 +71,13 @@ type Movie {
 
 type Mutation {
   addMovie(MovieInput: CreateMovieInput!): Movie!
-  changePassword(ChangePassworInput: ChangePasswordInput!, userId: ID!): Boolean!
+  changePassword(ChangePassworInput: ChangePasswordInput!, userId: ID!): BoolResponse!
   deleteMovie(id: Float!): Boolean!
   deleteUser(id: ID!): DeleteResponse!
   getNewToken(getNewTokenInput: GetNewTokenInput!): GetNewTokenResponse!
   login(LoginInput: LoginInput!): LoginResponse!
   registerUser(UserInput: CreateUserInput!): User!
-  revokeRefreshTokensForUser(userId: ID!): Boolean!
+  revokeRefreshTokensForUser(userId: ID!): BoolResponse!
   updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
   updateUser(UpdateUserInput: UpdateUserInput!, id: ID!): User!
 }

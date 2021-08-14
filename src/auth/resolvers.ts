@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 import {  ChangePasswordInput, GetNewTokenInput, LoginInput } from './input';
 
 
-import {  GetNewTokenResponse, LoginResponse } from './types';
+import {  BoolResponse, GetNewTokenResponse, LoginResponse } from './types';
 import { compare } from 'bcrypt';
 import { User } from '../entity/User/model';
 import { AuthService } from './services';
@@ -45,14 +45,14 @@ export class AuthResolver {
       })
   }
 
-  @Mutation((_) => Boolean)
-  async revokeRefreshTokensForUser(@Arg('userId',()=>ID!) userId:string){
-    return await this.authService.revokeRefreshTokensForUser(userId)
+  @Mutation((_) => BoolResponse)
+  async revokeRefreshTokensForUser(@Arg('userId',()=>ID!) userId:string) : Promise<BoolResponse>{
+    return { ok : await this.authService.revokeRefreshTokensForUser(userId)}
   }
 
-  @Mutation((_) => Boolean)
-  async changePassword(@Arg('userId',()=>ID!) userId:string, @Arg('ChangePassworInput') changePasswordInput:ChangePasswordInput){
-    return await this.authService.changePassword(userId,{...changePasswordInput})
+  @Mutation((_) => BoolResponse)
+  async changePassword(@Arg('userId',()=>ID!) userId:string, @Arg('ChangePassworInput') changePasswordInput:ChangePasswordInput) : Promise<BoolResponse>{
+    return { ok : await this.authService.changePassword(userId,{...changePasswordInput})}
   }
 
 
