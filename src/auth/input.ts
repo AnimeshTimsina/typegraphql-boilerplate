@@ -24,5 +24,19 @@ export class ChangePasswordInput {
   @Field()
   @Length(8,150)
   newPassword: string; 
-  
 }
+
+@InputType()
+export class ResetPasswordInput {
+  @Field()
+  token: string;  
+
+  @Field()
+  @Length(8,150)
+  newPassword: string; 
+
+  @Field()
+  @Length(8,150)
+  confirmNewPassword: string; 
+}
+

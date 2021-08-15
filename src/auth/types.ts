@@ -31,6 +31,7 @@ interface tokenProps {
 }
 
 export interface accessTokenProps extends tokenProps {}
+export interface passwordResetTokenProps extends tokenProps {}
 export interface refreshTokenProps extends tokenProps {
     tokenVersion:number
 }

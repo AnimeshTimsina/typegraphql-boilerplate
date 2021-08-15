@@ -1,6 +1,6 @@
 import {  Resolver, Mutation, Arg, ID } from 'type-graphql';
 import { Service } from 'typedi';
-import {  ChangePasswordInput, GetNewTokenInput, LoginInput } from './input';
+import {  ChangePasswordInput, GetNewTokenInput, LoginInput, ResetPasswordInput } from './input';
 
 
 import {  GetNewTokenResponse, LoginResponse } from './types';
@@ -8,8 +8,7 @@ import { compare } from 'bcrypt';
 import { User } from '../entity/User/model';
 import { AuthService } from './services';
 import { BoolResponse } from '../shared/types/graphql-types';
-
-
+import { emailService } from '../shared/services/emailService';
 
 @Service()
 @Resolver(_ => User)
@@ -56,6 +55,38 @@ export class AuthResolver {
     return { ok : await this.authService.changePassword(userId,{...changePasswordInput})}
   }
 
+  @Mutation((_) => BoolResponse)
+  async sendPasswordResetMail(@Arg('email',() => String!) email:string):Promise<BoolResponse>{
+    const user = await this.authService.getByEmail(email)
+    if (!user) throw ('User with this email doesn\'t exist') 
+      const token = this.authService.createPasswordResetToken(user)
+      try {
+        await emailService.sendMail({
+          to:user.email,
+          subject:'Password Reset',
+          text: `Click on this link to reset your password: https://localhost:5000/passwordreset/${token}`
+        })
+        return {
+          ok: true
+        }
+      } catch {
+        return {
+          ok:false
+        }
+      }
+  }
 
-
+  @Mutation((_) => BoolResponse)
+  async resetPassword(
+    @Arg('resetPasswordInput') resetPasswordInput: ResetPasswordInput,
+  ):Promise<BoolResponse>{
+    const {token,newPassword,confirmNewPassword} = resetPasswordInput
+    if (newPassword !== confirmNewPassword) throw('Passwords don\'t match')
+    const user = await this.authService.getUserFromPasswordResetToken(token)
+    if (!user) throw('Invalid token')
+    const success = await this.authService.setPassword(user,confirmNewPassword)
+    return {
+      ok: success
+    }
+  }
 }
