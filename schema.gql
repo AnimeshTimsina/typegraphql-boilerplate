@@ -77,7 +77,9 @@ type Mutation {
   getNewToken(getNewTokenInput: GetNewTokenInput!): GetNewTokenResponse!
   login(LoginInput: LoginInput!): LoginResponse!
   registerUser(UserInput: CreateUserInput!): User!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): BoolResponse!
   revokeRefreshTokensForUser(userId: ID!): BoolResponse!
+  sendPasswordResetMail(email: String!): BoolResponse!
   updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
   updateUser(UpdateUserInput: UpdateUserInput!, id: ID!): User!
 }
@@ -88,6 +90,12 @@ type Query {
   getMovies: [Movie!]
   getUser(id: ID!): User
   me: User!
+}
+
+input ResetPasswordInput {
+  confirmNewPassword: String!
+  newPassword: String!
+  token: String!
 }
 
 """Type of user"""

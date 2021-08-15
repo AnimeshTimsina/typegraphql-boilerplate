@@ -7,7 +7,7 @@ import Container, { Service } from "typedi"
 import { User } from "../entity/User/model"
 import { UserService } from "../entity/User/service"
 import { ChangePasswordInput } from "./input"
-import { accessTokenProps, MyContext, refreshTokenProps } from "./types"
+import { accessTokenProps, MyContext, passwordResetTokenProps, refreshTokenProps } from "./types"
 // import { UserService } from "entity/User/service"
 
 
@@ -42,6 +42,17 @@ export class AuthService extends UserService {
         }
     }
 
+    getUserFromPasswordResetToken:(c:string) => Promise<User|null> = async (passwordResetToken:string) => {
+        if (!passwordResetToken) return null
+        try {
+            const payload= verify(passwordResetToken,process.env.PASSWORD_RESET_TOKEN_SECRET!) as passwordResetTokenProps
+            const user = await this.getOne(payload.userId) 
+            return user ?? null
+        } catch {
+            return null
+        }
+    }
+
     createAccessToken:(u:User)=>string = (user:User) => {
         const payload:accessTokenProps = {
             userId:user.id
@@ -58,6 +69,15 @@ export class AuthService extends UserService {
         }
         return sign(payload,process.env.REFRESH_TOKEN_SECRET!,{
             expiresIn:"7d"
+        })
+    }
+
+    createPasswordResetToken:(u:User)=>string = (user:User) => {
+        const payload:passwordResetTokenProps = {
+            userId:user.id
+        }
+        return sign(payload,process.env.PASSWORD_RESET_TOKEN_SECRET!,{
+            expiresIn:"1d"
         })
     }
     
@@ -91,6 +111,17 @@ export class AuthService extends UserService {
         }
         catch {
             throw('Invalid refresh token')
+        }
+    }
+
+    setPassword:(user:User,password:string) => Promise<boolean> = async(user,newPassword) => {
+        try{
+            user.password = await hash(newPassword,12)
+            user.save()
+            user.tokenVersion += 1
+            return true
+        } catch {
+            return false
         }
     }
 
