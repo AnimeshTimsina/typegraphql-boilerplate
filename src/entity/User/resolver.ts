@@ -38,7 +38,7 @@ export class UserResolver {
 
 
   @Mutation((_) => DeleteResponse)
-  // @UseMiddleware(authService.userIsAdmin)
+  @UseMiddleware(authService.userIsAdmin)
   async deleteUser(@Arg('id',() => ID!) id: string): Promise<deleteResponse<string|null>> {
     const deleted = await this.userService.delete(id);
     if (!deleted.success) throw('User with this id doesn\'t exist')
@@ -46,7 +46,7 @@ export class UserResolver {
   }
 
   @Query((_) => User)
-  // @UseMiddleware(authService.isAuthenticated)
+  @UseMiddleware(authService.isAuthenticated)
   async me(
     @Ctx(){user}:MyContext
   ): Promise<User | undefined> {

@@ -10,7 +10,7 @@ import { AuthResolver } from './auth/resolvers';
 import { authService } from './auth/services';
 
 const app = express();
-
+// app.use(express.static(__dirname+"/pages"));
 
 async function main() {
   await initializeDB();
@@ -24,15 +24,23 @@ async function main() {
     introspection:true,
     context: async ctx => {
       const user = await authService.getUserFromHeader(ctx)
+      const accessToken = authService.getAccessTokenFromHeader(ctx)
       return {
         ...ctx,
-        user:user
+        user:user,
+        accessToken:accessToken
       }  
     } 
   });
   await server.start()
   server.applyMiddleware({ app });
   const port = process.env.PORT || 5000;
+
+
+  // app.get("/password-reset", (_, res) => {
+  //   res.sendFile(__dirname + "/pages/password-reset.html");
+  // });
+
   app.listen(port, () =>
     console.log(`Server is running on http://localhost:${port}/graphql`),
   );

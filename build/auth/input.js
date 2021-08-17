@@ -9,62 +9,66 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserInput = exports.CreateUserInput = void 0;
+exports.ResetPasswordInput = exports.ChangePasswordInput = exports.GetNewTokenInput = exports.LoginInput = void 0;
 const class_validator_1 = require("class-validator");
 const type_graphql_1 = require("type-graphql");
-const interface_1 = require("../../shared/types/interface");
-let CreateUserInput = class CreateUserInput {
+let LoginInput = class LoginInput {
 };
 __decorate([
     type_graphql_1.Field(),
-    class_validator_1.Length(2, 50),
     __metadata("design:type", String)
-], CreateUserInput.prototype, "firstName", void 0);
+], LoginInput.prototype, "email", void 0);
 __decorate([
     type_graphql_1.Field(),
-    class_validator_1.Length(2, 50),
     __metadata("design:type", String)
-], CreateUserInput.prototype, "lastName", void 0);
+], LoginInput.prototype, "password", void 0);
+LoginInput = __decorate([
+    type_graphql_1.InputType()
+], LoginInput);
+exports.LoginInput = LoginInput;
+let GetNewTokenInput = class GetNewTokenInput {
+};
 __decorate([
     type_graphql_1.Field(),
-    class_validator_1.Length(5, 150),
     __metadata("design:type", String)
-], CreateUserInput.prototype, "email", void 0);
+], GetNewTokenInput.prototype, "refreshToken", void 0);
+GetNewTokenInput = __decorate([
+    type_graphql_1.InputType()
+], GetNewTokenInput);
+exports.GetNewTokenInput = GetNewTokenInput;
+let ChangePasswordInput = class ChangePasswordInput {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], ChangePasswordInput.prototype, "currentPassword", void 0);
 __decorate([
     type_graphql_1.Field(),
     class_validator_1.Length(8, 150),
     __metadata("design:type", String)
-], CreateUserInput.prototype, "password", void 0);
-__decorate([
-    type_graphql_1.Field(_ => interface_1.USER_ROLE),
-    __metadata("design:type", String)
-], CreateUserInput.prototype, "role", void 0);
-__decorate([
-    type_graphql_1.Field({ nullable: true }),
-    __metadata("design:type", String)
-], CreateUserInput.prototype, "displayPicture", void 0);
-CreateUserInput = __decorate([
+], ChangePasswordInput.prototype, "newPassword", void 0);
+ChangePasswordInput = __decorate([
     type_graphql_1.InputType()
-], CreateUserInput);
-exports.CreateUserInput = CreateUserInput;
-let UpdateUserInput = class UpdateUserInput {
+], ChangePasswordInput);
+exports.ChangePasswordInput = ChangePasswordInput;
+let ResetPasswordInput = class ResetPasswordInput {
 };
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
-    class_validator_1.Length(2, 50),
+    type_graphql_1.Field(),
     __metadata("design:type", String)
-], UpdateUserInput.prototype, "firstName", void 0);
+], ResetPasswordInput.prototype, "token", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
-    class_validator_1.Length(2, 50),
+    type_graphql_1.Field(),
+    class_validator_1.Length(8, 150),
     __metadata("design:type", String)
-], UpdateUserInput.prototype, "lastName", void 0);
+], ResetPasswordInput.prototype, "newPassword", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
+    type_graphql_1.Field(),
+    class_validator_1.Length(8, 150),
     __metadata("design:type", String)
-], UpdateUserInput.prototype, "displayPicture", void 0);
-UpdateUserInput = __decorate([
+], ResetPasswordInput.prototype, "confirmNewPassword", void 0);
+ResetPasswordInput = __decorate([
     type_graphql_1.InputType()
-], UpdateUserInput);
-exports.UpdateUserInput = UpdateUserInput;
+], ResetPasswordInput);
+exports.ResetPasswordInput = ResetPasswordInput;
 //# sourceMappingURL=input.js.map

@@ -17,21 +17,27 @@ const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const typedi_1 = require("typedi");
 const express_1 = __importDefault(require("express"));
-const resolver_1 = require("entity/User/resolver");
-const resolver_2 = require("entity/Movie/resolver");
-const initializeDB_1 = __importDefault(require("entity/initializeDB"));
+const resolver_1 = require("./entity/User/resolver");
+const resolver_2 = require("./entity/Movie/resolver");
+const initializeDB_1 = __importDefault(require("./entity/initializeDB"));
+const resolvers_1 = require("./auth/resolvers");
+const services_1 = require("./auth/services");
 const app = express_1.default();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield initializeDB_1.default();
         const schema = yield type_graphql_1.buildSchema({
-            resolvers: [resolver_2.MovieResolver, resolver_1.UserResolver],
+            resolvers: [resolver_2.MovieResolver, resolver_1.UserResolver, resolvers_1.AuthResolver],
             container: typedi_1.Container,
             emitSchemaFile: true,
         });
         const server = new apollo_server_express_1.ApolloServer({
             schema,
             introspection: true,
+            context: (ctx) => __awaiter(this, void 0, void 0, function* () {
+                const user = yield services_1.authService.getUserFromHeader(ctx);
+                return Object.assign(Object.assign({}, ctx), { user: user });
+            })
         });
         yield server.start();
         server.applyMiddleware({ app });

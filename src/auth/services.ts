@@ -1,13 +1,14 @@
-import { ExpressContext } from "apollo-server-express"
+import { AuthenticationError, ExpressContext, ForbiddenError } from "apollo-server-express"
 import { compare, hash } from "bcrypt"
-import { sign, verify } from "jsonwebtoken"
+import { sign, TokenExpiredError, verify } from "jsonwebtoken"
 import { MiddlewareFn } from "type-graphql"
 
 import Container, { Service } from "typedi"
 import { User } from "../entity/User/model"
 import { UserService } from "../entity/User/service"
+import { ACCESS_TOKEN_EXPIRY, PASSWORD_RESET_LINK_EXPIRY, REFRESH_TOKEN_EXPIRY } from "./authConfig"
 import { ChangePasswordInput } from "./input"
-import { accessTokenProps, MyContext, passwordResetTokenProps, refreshTokenProps } from "./types"
+import { accessTokenProps, LoginExpiredError, MyContext, passwordResetTokenProps, refreshTokenProps } from "./types"
 // import { UserService } from "entity/User/service"
 
 
@@ -26,10 +27,25 @@ export class AuthService extends UserService {
         const payload= verify(token,process.env.ACCESS_TOKEN_SECRET!) as accessTokenProps
         const user = await this.getOne(payload.userId) 
         return user ?? null
-      }catch {
+      }catch(err) {
+        //   if (err instanceof TokenExpiredError) {
+        //       throw new LoginExpiredError('Session has expired')
+        //   }
           return null
       }
     }
+
+    getAccessTokenFromHeader:(c:ExpressContext) => string|null = (ctx) => {
+        const authHeader = (ctx.req).get('Authorization')
+        if (!authHeader) return null
+        try {
+            const token = authHeader.replace('Bearer ', '')
+            return token ?? null
+          }catch(err) {
+              return null
+          }
+    }
+  
 
     getUserFromRefreshToken:(c:string) => Promise<User|null> = async (refreshToken:string) => {
         if (!refreshToken) return null
@@ -37,7 +53,10 @@ export class AuthService extends UserService {
             const payload= verify(refreshToken,process.env.REFRESH_TOKEN_SECRET!) as refreshTokenProps
             const user = await this.getOne(payload.userId) 
             return user ?? null
-        } catch {
+        } catch(err) {
+            if (err instanceof TokenExpiredError){
+                throw new LoginExpiredError('Session has expired') 
+            }
             return null
         }
     }
@@ -58,7 +77,7 @@ export class AuthService extends UserService {
             userId:user.id
         }
         return sign(payload,process.env.ACCESS_TOKEN_SECRET!,{
-            expiresIn:"15m"
+            expiresIn:ACCESS_TOKEN_EXPIRY
         })
     }
     
@@ -68,7 +87,7 @@ export class AuthService extends UserService {
             tokenVersion:user.tokenVersion
         }
         return sign(payload,process.env.REFRESH_TOKEN_SECRET!,{
-            expiresIn:"7d"
+            expiresIn:REFRESH_TOKEN_EXPIRY
         })
     }
 
@@ -77,20 +96,36 @@ export class AuthService extends UserService {
             userId:user.id
         }
         return sign(payload,process.env.PASSWORD_RESET_TOKEN_SECRET!,{
-            expiresIn:"1d"
+            expiresIn:PASSWORD_RESET_LINK_EXPIRY
         })
     }
     
    isAuthenticated: MiddlewareFn<MyContext> = ({context},next) => {
-        if (!context.user) throw(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
-        return next()
+        if (!context.accessToken) throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+        try {
+            verify(context.accessToken,process.env.ACCESS_TOKEN_SECRET!) as accessTokenProps
+            if (!context.user) throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+            return next()
+        } catch(err){
+            if (err instanceof TokenExpiredError) {
+                      throw new LoginExpiredError('Session has expired')
+                  }
+                  throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+        }
     }
 
     
     userIsAdmin:MiddlewareFn<MyContext> = ({context},next) => {
-        if (!context.user) throw(this.NOT_AUTHENTICATED_ERROR_MESSAGE) 
-        if (!this.isAdmin(context.user!)) throw(this.NOT_AUTHORIZED_ERROR_MESSAGE)
-        return next()
+        if (!context.accessToken) throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+        try {
+            verify(context.accessToken,process.env.ACCESS_TOKEN_SECRET!) as accessTokenProps
+            if (!context.user) throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+            if (!this.isAdmin(context.user!)) throw new ForbiddenError(this.NOT_AUTHORIZED_ERROR_MESSAGE)
+            return next()
+        } catch(err){
+            if (err instanceof TokenExpiredError) throw new LoginExpiredError('Session has expired')         
+            throw new AuthenticationError(this.NOT_AUTHENTICATED_ERROR_MESSAGE)
+        }
     }
 
     revokeRefreshTokensForUser:(userId:string) => Promise<boolean> = async (userId) => {

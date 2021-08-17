@@ -19,6 +19,7 @@ exports.UserService = void 0;
 const typedi_1 = require("typedi");
 const model_1 = require("./model");
 const bcrypt_1 = require("bcrypt");
+const interface_1 = require("../../shared/types/interface");
 let UserService = class UserService {
     constructor() {
         this.getAll = () => __awaiter(this, void 0, void 0, function* () {
@@ -26,9 +27,10 @@ let UserService = class UserService {
         });
         this.getOne = (id) => __awaiter(this, void 0, void 0, function* () {
             const user = yield model_1.User.findOne({ where: { id } });
-            if (!user) {
-                throw new Error(`The user with id: ${id} does not exist!`);
-            }
+            return user;
+        });
+        this.getByEmail = (email) => __awaiter(this, void 0, void 0, function* () {
+            const user = yield model_1.User.findOne({ where: { email } });
             return user;
         });
         this.create = (createUserInput) => __awaiter(this, void 0, void 0, function* () {
@@ -51,6 +53,28 @@ let UserService = class UserService {
                 };
             }
         });
+        this.update = (id, updateUserInput) => __awaiter(this, void 0, void 0, function* () {
+            const userFound = yield model_1.User.findOne({ where: { id } });
+            if (!userFound) {
+                throw new Error(`The user with id: ${id} does not exist!`);
+            }
+            Object.assign(userFound, updateUserInput);
+            const updatedUser = yield userFound.save();
+            return updatedUser;
+        });
+        this.incrementTokenNumber = (user) => {
+            user.tokenVersion = user.tokenVersion + 1;
+            user.save();
+        };
+        this.isAdmin = (user) => {
+            return user.role === interface_1.USER_ROLE.ADMIN;
+        };
+        this.isClient = (user) => {
+            return user.role === interface_1.USER_ROLE.CLIENT;
+        };
+        this.isStaff = (user) => {
+            return user.role === interface_1.USER_ROLE.STAFF;
+        };
     }
 };
 UserService = __decorate([
