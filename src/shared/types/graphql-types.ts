@@ -1,18 +1,16 @@
-import { Field, ID, ObjectType } from "type-graphql";
-
+import { Field, ID, ObjectType } from 'type-graphql';
 
 @ObjectType()
 export class DeleteResponse {
-    @Field((_) => ID)
-    id:string
+  @Field((_) => ID)
+  id: string;
 
-    @Field((_) => Boolean!)
-    success:boolean
-
+  @Field((_) => Boolean!)
+  success: boolean;
 }
 
 @ObjectType()
 export class BoolResponse {
-    @Field((_) => Boolean)
-    ok:boolean
+  @Field((_) => Boolean)
+  ok: boolean;
 }

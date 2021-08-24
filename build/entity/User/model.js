@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-const interface_1 = require("shared/types/interface");
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
+const interface_1 = require("../../shared/types/interface");
 let User = class User extends typeorm_1.BaseEntity {
 };
 __decorate([
-    type_graphql_1.Field(),
+    type_graphql_1.Field((_) => type_graphql_1.ID),
     typeorm_1.PrimaryGeneratedColumn('uuid'),
     __metadata("design:type", String)
 ], User.prototype, "id", void 0);
@@ -48,10 +48,9 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    type_graphql_1.Field(),
     typeorm_1.Column({
         type: "varchar",
-        "length": 150,
+        "length": 150
     }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
@@ -59,17 +58,16 @@ __decorate([
     type_graphql_1.Field(_ => Date),
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)
-], User.prototype, "updatedAt", void 0);
+], User.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(_ => Date),
     typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Date)
-], User.prototype, "createdAt", void 0);
+], User.prototype, "updatedAt", void 0);
 __decorate([
-    type_graphql_1.Field(_ => type_graphql_1.Int),
     typeorm_1.Column({ type: 'int', default: 0 }),
     __metadata("design:type", Number)
-], User.prototype, "tokenNumber", void 0);
+], User.prototype, "tokenVersion", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column({ nullable: true }),

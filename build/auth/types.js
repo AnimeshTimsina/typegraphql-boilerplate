@@ -9,30 +9,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BoolResponse = exports.DeleteResponse = void 0;
+exports.GetNewTokenResponse = exports.LoginResponse = void 0;
 const type_graphql_1 = require("type-graphql");
-let DeleteResponse = class DeleteResponse {
+const model_1 = require("../entity/User/model");
+let LoginResponse = class LoginResponse {
 };
 __decorate([
-    type_graphql_1.Field((_) => type_graphql_1.ID),
+    type_graphql_1.Field((_) => model_1.User),
+    __metadata("design:type", model_1.User)
+], LoginResponse.prototype, "user", void 0);
+__decorate([
+    type_graphql_1.Field((_) => String),
     __metadata("design:type", String)
-], DeleteResponse.prototype, "id", void 0);
+], LoginResponse.prototype, "accessToken", void 0);
 __decorate([
-    type_graphql_1.Field((_) => Boolean),
-    __metadata("design:type", Boolean)
-], DeleteResponse.prototype, "success", void 0);
-DeleteResponse = __decorate([
+    type_graphql_1.Field((_) => String),
+    __metadata("design:type", String)
+], LoginResponse.prototype, "refreshToken", void 0);
+LoginResponse = __decorate([
     type_graphql_1.ObjectType()
-], DeleteResponse);
-exports.DeleteResponse = DeleteResponse;
-let BoolResponse = class BoolResponse {
+], LoginResponse);
+exports.LoginResponse = LoginResponse;
+let GetNewTokenResponse = class GetNewTokenResponse extends LoginResponse {
 };
-__decorate([
-    type_graphql_1.Field((_) => Boolean),
-    __metadata("design:type", Boolean)
-], BoolResponse.prototype, "ok", void 0);
-BoolResponse = __decorate([
+GetNewTokenResponse = __decorate([
     type_graphql_1.ObjectType()
-], BoolResponse);
-exports.BoolResponse = BoolResponse;
-//# sourceMappingURL=graphql-types.js.map
+], GetNewTokenResponse);
+exports.GetNewTokenResponse = GetNewTokenResponse;
+//# sourceMappingURL=types.js.map

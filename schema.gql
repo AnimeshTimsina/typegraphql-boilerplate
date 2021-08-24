@@ -72,7 +72,11 @@ type Movie {
 type Mutation {
   addMovie(MovieInput: CreateMovieInput!): Movie!
   changePassword(ChangePassworInput: ChangePasswordInput!, userId: ID!): BoolResponse!
+  createProduct(ProductInput: ProductInput!): Product!
+  createProductCategory(ProductCategoryInput: ProductCategoryInput!): ProductCategory!
   deleteMovie(id: Float!): Boolean!
+  deleteProduct(id: ID!): DeleteResponse!
+  deleteProductCategory(id: ID!): DeleteResponse!
   deleteUser(id: ID!): DeleteResponse!
   getNewToken(getNewTokenInput: GetNewTokenInput!): GetNewTokenResponse!
   login(LoginInput: LoginInput!): LoginResponse!
@@ -81,13 +85,48 @@ type Mutation {
   revokeRefreshTokensForUser(userId: ID!): BoolResponse!
   sendPasswordResetMail(email: String!): BoolResponse!
   updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
+  updateProductCategory(ProductCategoryInput: ProductCategoryInput!, id: ID!): ProductCategory!
   updateUser(UpdateUserInput: UpdateUserInput!, id: ID!): User!
 }
 
+"""The product model"""
+type Product {
+  category: ProductCategory!
+  description: String!
+  id: ID!
+  photo: String
+  price: Float
+  title: String!
+}
+
+"""The product category model"""
+type ProductCategory {
+  id: ID!
+  products: [Product!]!
+  title: String!
+}
+
+input ProductCategoryInput {
+  title: String!
+}
+
+input ProductInput {
+  categoryID: ID!
+  description: String
+  photo: String
+  price: Float
+  title: String!
+}
+
 type Query {
+  allProductCategories: [ProductCategory!]
+  allProducts: [Product!]
   allUsers: [User!]
   getMovie(id: Float!): Movie
   getMovies: [Movie!]
+  getProduct(id: ID!): Product
+  getProductCategory(id: ID!): ProductCategory
   getUser(id: ID!): User
   me: User!
 }
@@ -109,6 +148,14 @@ input UpdateMovieInput {
   actors: [String!]
   description: String
   releaseYear: String
+  title: String
+}
+
+input UpdateProductInput {
+  categoryID: ID
+  description: String
+  photo: String
+  price: Float
   title: String
 }
 

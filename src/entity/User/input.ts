@@ -21,24 +21,23 @@ export class CreateUserInput implements Partial<User> {
   @Length(8, 150)
   password: string;
 
-  @Field(_ => USER_ROLE)
-  role: USER_ROLE
+  @Field((_) => USER_ROLE)
+  role: USER_ROLE;
 
   @Field({ nullable: true })
-  displayPicture?: string
-
+  displayPicture?: string;
 }
 
 @InputType()
 export class UpdateUserInput implements Partial<User> {
-  @Field({nullable:true})
+  @Field({ nullable: true })
   @Length(2, 50)
   firstName?: string;
 
-  @Field({nullable:true})
+  @Field({ nullable: true })
   @Length(2, 50)
   lastName?: string;
 
   @Field({ nullable: true })
-  displayPicture?: string
+  displayPicture?: string;
 }
