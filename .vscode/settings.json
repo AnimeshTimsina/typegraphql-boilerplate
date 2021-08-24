@@ -3,5 +3,8 @@
         "**/node_modules": false
     },
     "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.autoClosingBrackets": "always"
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+      }
 }

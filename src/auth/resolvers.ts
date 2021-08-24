@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 import {  ChangePasswordInput, GetNewTokenInput, LoginInput, ResetPasswordInput } from './input';
 
 
-import {  GetNewTokenResponse, LoginResponse } from './types';
+import {  GetNewTokenResponse, InvalidCredentialsError, LoginResponse } from './types';
 import { compare } from 'bcrypt';
 import { User } from '../entity/User/model';
 import { AuthService } from './services';
@@ -21,9 +21,9 @@ export class AuthResolver {
     @Arg('LoginInput') loginInput: LoginInput,
   ): Promise<LoginResponse> {
     const user = await this.authService.getByEmail(loginInput.email)
-    if (!user) throw('User doesn\'t exist')
+    if (!user) throw new InvalidCredentialsError('User with this email doesn\'t exist')
     const isValid = await compare(loginInput.password,user.password)
-    if (!isValid) throw('Invalid credentials')
+    if (!isValid) throw new InvalidCredentialsError('Incorrect password')
     return({
         user: user,
         accessToken:this.authService.createAccessToken(user),
@@ -58,7 +58,7 @@ export class AuthResolver {
   @Mutation((_) => BoolResponse)
   async sendPasswordResetMail(@Arg('email',() => String!) email:string):Promise<BoolResponse>{
     const user = await this.authService.getByEmail(email)
-    if (!user) throw ('User with this email doesn\'t exist') 
+    if (!user) throw new InvalidCredentialsError('User with this email doesn\'t exist') 
       const token = this.authService.createPasswordResetToken(user)
       try {
         await emailService.sendMail({

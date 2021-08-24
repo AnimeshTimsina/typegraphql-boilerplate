@@ -48,3 +48,10 @@ export class LoginExpiredError extends ApolloError {
   }
 }
 
+export class InvalidCredentialsError extends ApolloError {
+  constructor(message: string) {
+    super(message, 'INVALID_CREDENTIALS');
+
+    Object.defineProperty(this, 'name', { value: 'InvalidCredentialsError' });
+  }
+}

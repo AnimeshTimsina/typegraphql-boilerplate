@@ -1,15 +1,15 @@
+import { hash } from 'bcrypt';
 import { Service } from 'typedi';
-import { User } from './model';
-import {hash} from 'bcrypt'
-import { CreateUserInput, UpdateUserInput } from './input';
+import { DuplicateRecordError } from '../../shared/types/graphql-errors';
 import { deleteResponse, USER_ROLE } from '../../shared/types/interface';
+import { CreateUserInput, UpdateUserInput } from './input';
+import { User } from './model';
 
 @Service()
 export class UserService {
   getAll = async (): Promise<User[]> => {
     return await User.find();
   };
-
 
   getOne = async (id: string): Promise<User | undefined> => {
     const user = await User.findOne({ where: { id } });
@@ -30,29 +30,35 @@ export class UserService {
   };
 
   create = async (createUserInput: CreateUserInput): Promise<User> => {
+    const user = await User.findOne({
+      where: { email: createUserInput.email },
+    });
+    if (user)
+      throw new DuplicateRecordError(
+        `User with email "${createUserInput.email}" already exists!`,
+      );
     return await User.create({
       ...createUserInput,
-      password: await hash(createUserInput.password,12)
+      password: await hash(createUserInput.password, 12),
     }).save();
   };
 
-  delete = async (id:string):Promise<deleteResponse<string|null>> => {
+  delete = async (id: string): Promise<deleteResponse<string | null>> => {
     try {
       await User.delete({
-        id:id
-      })
+        id: id,
+      });
       return {
         id: id,
-        success: true
-      }
-    }
-    catch(err) {
+        success: true,
+      };
+    } catch (err) {
       return {
-        id:null,
-      success:false
-      }
-    }  
-  } 
+        id: null,
+        success: false,
+      };
+    }
+  };
 
   update = async (
     id: string,
@@ -67,23 +73,20 @@ export class UserService {
     return updatedUser;
   };
 
-  incrementTokenNumber = (user:User) => {
-    user.tokenVersion = user.tokenVersion + 1
-    user.save()
-  }
+  incrementTokenNumber = (user: User) => {
+    user.tokenVersion = user.tokenVersion + 1;
+    user.save();
+  };
 
-  isAdmin = (user:User):boolean => {
-    return user.role === USER_ROLE.ADMIN
-  }
+  isAdmin = (user: User): boolean => {
+    return user.role === USER_ROLE.ADMIN;
+  };
 
-  isClient = (user:User):boolean => {
-    return user.role === USER_ROLE.CLIENT
-  }
+  isClient = (user: User): boolean => {
+    return user.role === USER_ROLE.CLIENT;
+  };
 
-  isStaff = (user:User):boolean => {
-    return user.role === USER_ROLE.STAFF
-  }
-
+  isStaff = (user: User): boolean => {
+    return user.role === USER_ROLE.STAFF;
+  };
 }
-
-
