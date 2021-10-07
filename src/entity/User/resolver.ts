@@ -1,10 +1,12 @@
 import {
   Arg,
   Ctx,
+  FieldResolver,
   ID,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from 'type-graphql';
 import { Service } from 'typedi';
@@ -63,5 +65,10 @@ export class UserResolver {
     @Arg('UpdateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User> {
     return await this.userService.update(id, updateUserInput);
+  }
+
+  @FieldResolver()
+  customersCreated(@Root() user: User) {
+    return this.userService.getCreatedCustomers(user.id);
   }
 }

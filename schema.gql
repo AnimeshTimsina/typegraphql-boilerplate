@@ -12,13 +12,6 @@ input ChangePasswordInput {
   newPassword: String!
 }
 
-input CreateMovieInput {
-  actors: [String!]!
-  description: String!
-  releaseYear: String
-  title: String!
-}
-
 input CreateUserInput {
   displayPicture: String
   email: String!
@@ -26,6 +19,27 @@ input CreateUserInput {
   lastName: String!
   password: String!
   role: USER_ROLE!
+}
+
+"""The customer model"""
+type Customer {
+  address: String
+  createdAt: DateTime!
+  createdBy: User!
+  description: String
+  fullName: String!
+  id: ID!
+  phone: String
+  updatedAt: DateTime!
+  vat: Float
+}
+
+input CustomerInput {
+  address: String
+  description: String
+  fullName: String!
+  phone: String
+  vat: Float
 }
 
 """
@@ -59,22 +73,12 @@ type LoginResponse {
   user: User!
 }
 
-type Movie {
-  actors: [String!]!
-  createdAt: DateTime!
-  description: String!
-  id: Float!
-  releaseYear: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
 type Mutation {
-  addMovie(MovieInput: CreateMovieInput!): Movie!
   changePassword(ChangePassworInput: ChangePasswordInput!, userId: ID!): BoolResponse!
+  createCustomer(CustomerInput: CustomerInput!): Customer!
   createProduct(ProductInput: ProductInput!): Product!
   createProductCategory(ProductCategoryInput: ProductCategoryInput!): ProductCategory!
-  deleteMovie(id: Float!): Boolean!
+  deleteCustomer(id: ID!): DeleteResponse!
   deleteProduct(id: ID!): DeleteResponse!
   deleteProductCategory(id: ID!): DeleteResponse!
   deleteUser(id: ID!): DeleteResponse!
@@ -84,7 +88,7 @@ type Mutation {
   resetPassword(resetPasswordInput: ResetPasswordInput!): BoolResponse!
   revokeRefreshTokensForUser(userId: ID!): BoolResponse!
   sendPasswordResetMail(email: String!): BoolResponse!
-  updateMovie(MovieInput: UpdateMovieInput!, id: Float!): Movie!
+  updateCustomer(CustomerInput: CustomerInput!, id: ID!): Customer!
   updateProduct(id: ID!, input: UpdateProductInput!): Product!
   updateProductCategory(ProductCategoryInput: ProductCategoryInput!, id: ID!): ProductCategory!
   updateUser(UpdateUserInput: UpdateUserInput!, id: ID!): User!
@@ -93,7 +97,7 @@ type Mutation {
 """The product model"""
 type Product {
   category: ProductCategory!
-  description: String!
+  description: String
   id: ID!
   photo: String
   price: Float
@@ -120,11 +124,11 @@ input ProductInput {
 }
 
 type Query {
+  allCustomers: [Customer!]
   allProductCategories: [ProductCategory!]
   allProducts: [Product!]
   allUsers: [User!]
-  getMovie(id: Float!): Movie
-  getMovies: [Movie!]
+  getCustomer(id: ID!): Customer
   getProduct(id: ID!): Product
   getProductCategory(id: ID!): ProductCategory
   getUser(id: ID!): User
@@ -144,13 +148,6 @@ enum USER_ROLE {
   STAFF
 }
 
-input UpdateMovieInput {
-  actors: [String!]
-  description: String
-  releaseYear: String
-  title: String
-}
-
 input UpdateProductInput {
   categoryID: ID
   description: String
@@ -168,7 +165,8 @@ input UpdateUserInput {
 """The user model"""
 type User {
   createdAt: DateTime!
-  displayPicture: String!
+  customersCreated: [Customer!]!
+  displayPicture: String
   email: String!
   firstName: String!
   id: ID!

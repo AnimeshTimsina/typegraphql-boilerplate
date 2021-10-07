@@ -7,8 +7,8 @@ import { Container } from 'typedi';
 import { AuthResolver } from './auth/resolvers';
 import { authService } from './auth/services';
 import { ProductCategoryResolver } from './entity/Category/resolver';
+import { CustomerResolver } from './entity/Customer/resolver';
 import initializeDB from './entity/initializeDB';
-import { MovieResolver } from './entity/Movie/resolver';
 import { ProductResolver } from './entity/Product/resolver';
 import { UserResolver } from './entity/User/resolver';
 
@@ -20,11 +20,11 @@ async function main() {
   await initializeDB();
   const schema = await buildSchema({
     resolvers: [
-      MovieResolver,
       UserResolver,
       AuthResolver,
       ProductCategoryResolver,
       ProductResolver,
+      CustomerResolver,
     ],
     container: Container,
     emitSchemaFile: true,

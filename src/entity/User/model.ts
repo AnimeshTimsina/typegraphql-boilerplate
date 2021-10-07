@@ -4,10 +4,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { USER_ROLE } from '../../shared/types/interface';
+import { Customer } from '../Customer/model';
 
 @ObjectType({ description: 'The user model' })
 @Entity({ name: 'auth_user' })
@@ -56,7 +58,11 @@ export class User extends BaseEntity {
   @Column({ type: 'int', default: 0 })
   tokenVersion: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   displayPicture?: string;
+
+  @Field((_) => [Customer])
+  @OneToMany((_) => Customer, (customer) => customer.createdBy)
+  customersCreated: [Customer];
 }

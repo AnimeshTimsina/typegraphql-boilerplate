@@ -2,6 +2,7 @@ import { hash } from 'bcrypt';
 import { Service } from 'typedi';
 import { DuplicateRecordError } from '../../shared/types/graphql-errors';
 import { deleteResponse, USER_ROLE } from '../../shared/types/interface';
+import { Customer } from '../Customer/model';
 import { CreateUserInput, UpdateUserInput } from './input';
 import { User } from './model';
 
@@ -12,20 +13,25 @@ export class UserService {
   };
 
   getOne = async (id: string): Promise<User | undefined> => {
-    const user = await User.findOne({ where: { id } });
+    const user = await User.findOne({
+      where: { id },
+      relations: ['customersCreated'],
+    });
 
-    // if (!user) {
-    //   throw new Error(`The user with id: ${id} does not exist!`);
-    // }
     return user;
   };
 
-  getByEmail = async (email: string): Promise<User | undefined> => {
-    const user = await User.findOne({ where: { email } });
+  getCreatedCustomers = async (id: string): Promise<Customer[] | undefined> => {
+    const user = await this.getOne(id);
+    return user?.customersCreated ?? [];
+  };
 
-    // if (!user) {
-    //   throw new Error(`The user with id: ${email} does not exist!`);
-    // }
+  getByEmail = async (email: string): Promise<User | undefined> => {
+    const user = await User.findOne({
+      where: { email },
+      relations: ['customersCreated'],
+    });
+
     return user;
   };
 
@@ -64,7 +70,10 @@ export class UserService {
     id: string,
     updateUserInput: UpdateUserInput,
   ): Promise<User> => {
-    const userFound = await User.findOne({ where: { id } });
+    const userFound = await User.findOne({
+      where: { id },
+      relations: ['customersCreated'],
+    });
     if (!userFound) {
       throw new Error(`The user with id: ${id} does not exist!`);
     }

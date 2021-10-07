@@ -20,14 +20,14 @@ export class Product extends BaseEntity {
   @Column('varchar', { length: 50, unique: true })
   title: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('varchar', { nullable: true })
   @Length(0, 500)
   description?: string;
 
   @Field({ nullable: true })
   @Min(0)
-  @Column('float')
+  @Column('float', { nullable: true })
   price?: number;
 
   @Field((_) => ProductCategory)
